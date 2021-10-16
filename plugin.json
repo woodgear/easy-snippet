@@ -1,5 +1,5 @@
 {
-    "pluginName": "easy-snippet",
+    "pluginName": "easy-card",
     "version": "0.0.1",
     "preload": "./src/preload.js",
     "logo": "logo.png",
@@ -7,11 +7,12 @@
     "homepage": "https://github.com/woodgear",
     "features": [
         {
-            "code": "sp",
+            "code": "card",
             "explain": "easy-snippet",
             "cmds": [
-                "sp",
-                "文本片段"
+                "card",
+                "卡片",
+                "ad"
             ]
         }
     ]

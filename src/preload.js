@@ -1,80 +1,32 @@
-const exec = require('child_process').exec;
-const execSync = require('child_process').execSync;
+const { UtoolsShellActions } = require("./shell")
+const fs = require("fs")
+const homedir = require('os').homedir();
 
-async function cmd(cmd) {
-	return new Promise((resolve, reject) => {
-		exec(cmd, (error, stdout, stderr) => {
-			if (error) {
-				reject(error)
-			}
-			resolve(stdout ? stdout.trim() : stderr);
-		});
-	});
+function getConfig() {
+	const configJsonStr = fs.readFileSync(`${homedir}/.easy-card.rc`)
+	const config = JSON.parse(configJsonStr)
+	return config
 }
 
-function cmdSync(cmd) {
-	const stdout = execSync(cmd)
-	return stdout.toString().trim();
-}
+const config = getConfig()
 
-
-class UtoolsShellActions {
-	constructor(path) {
-		this.path = path
-	}
-
-	async eval(opt) {
-		return cmd(`bash -c 'source ${this.path} && ${opt}'`)
-	}
-
-	evalSync(opt) {
-		return cmdSync(`bash -c 'source ${this.path} && ${opt}'`)
-	}
-
-	mode() {
-		return this.evalSync("mode")
-	}
-
-	code() {
-		return this.evalSync("code")
-	}
-
-	separator() {
-		return this.evalSync("separator")
-	}
-
-	getSeparator() {
-		return this.separator()
-	}
-
-	async list() {
-		const ret = await this.eval("list")
-		return ret.split(this.getSeparator()).filter(str => str.length != 0)
-	}
-
-	async evalSelect(opt) {
-		return this.eval(`eval ${opt}`)
-	}
-
-	async preview(opt) {
-		return this.eval(`description ${opt}`)
-	}
-}
-
-const UTOOLS_SHELL_ACTIONS_PATH = ["/home/wucong/sm/project/easy-snippet/src/example.utools.sh"]
+const UTOOLS_SHELL_ACTIONS_PATH = config.actionsPath
 
 const OUT = {}
 UTOOLS_SHELL_ACTIONS_PATH.forEach((path) => {
 	const shell = new UtoolsShellActions(path)
-	const code = shell.code()
+
+	const feature = shell.feature()
 	const mode = shell.mode()
-	OUT[code] = {
+	console.log(feature)
+	OUT[feature.code] = {
 		mode,
 		args: {
 			enter: (action, callbackSetList) => {
 				(async () => {
 					const list = await shell.list()
-					callbackSetList(list.map(ret => { return { title: ret } }))
+					console.log(list)
+					callbackSetList(list)
 				})()
 			},
 			search: (action, searchWord, callbackSetList) => {
@@ -91,15 +43,15 @@ UTOOLS_SHELL_ACTIONS_PATH.forEach((path) => {
 async function asyncSearch(shell, utools, action, searchWord, callbackSetList) {
 	const list = await shell.list()
 	callbackSetList(
-		list.filter(ret => ret.toLowerCase().includes(searchWord.toLowerCase()))
-			.map(win => {
-				return { title: win }
+		list.filter(item => item.title.toLowerCase().includes(searchWord.toLowerCase()))
+			.map(item => {
+				return item
 			}))
 }
 
 async function asyncSelect(shell, utools, action, itemData, callbackSetList) {
 	window.utools.outPlugin()
-	await shell.evalSelect(itemData.title.trim())
+	await shell.evalSelect(itemData.ctx.trim())
 }
 
 window.exports = OUT

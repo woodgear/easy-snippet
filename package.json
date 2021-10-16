@@ -7,5 +7,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "mocha": "^9.1.3"
   }
 }
