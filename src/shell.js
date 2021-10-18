@@ -49,7 +49,7 @@ class UtoolsShellActions {
 	}
 
 	async evalSelect(opt) {
-		return this.eval(`run ${opt}`)
+		return this.eval(`run "${opt}"`)
 	}
 }
 

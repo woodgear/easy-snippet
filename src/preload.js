@@ -50,7 +50,8 @@ async function asyncSearch(shell, utools, action, searchWord, callbackSetList) {
 }
 
 async function asyncSelect(shell, utools, action, itemData, callbackSetList) {
-	window.utools.outPlugin()
+	utools.outPlugin()
+	utools.hideMainWindow()
 	await shell.evalSelect(itemData.ctx.trim())
 }
 
