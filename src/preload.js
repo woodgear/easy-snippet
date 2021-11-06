@@ -2,6 +2,9 @@ const { UtoolsShellActions } = require("./shell")
 const fs = require("fs")
 const homedir = require('os').homedir();
 
+function log(msg) {
+	fs.appendFileSync("/home/cong/.easy-card.log", JSON.stringify(msg) + "\n", { encoding: 'utf8', })
+}
 function getConfig() {
 	const configJsonStr = fs.readFileSync(`${homedir}/.easy-card.rc`)
 	const config = JSON.parse(configJsonStr)
@@ -9,16 +12,17 @@ function getConfig() {
 }
 
 const config = getConfig()
-
+log(`ap is ${config.actionsPath}`)
 const UTOOLS_SHELL_ACTIONS_PATH = config.actionsPath
 
 const OUT = {}
 UTOOLS_SHELL_ACTIONS_PATH.forEach((path) => {
+
 	const shell = new UtoolsShellActions(path)
 
 	const feature = shell.feature()
 	const mode = shell.mode()
-	console.log(feature)
+	log(`feature is ${JSON.stringify(feature)} mode is ${mode}`)
 	OUT[feature.code] = {
 		mode,
 		args: {

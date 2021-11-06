@@ -24,11 +24,11 @@ class UtoolsShellActions {
 	}
 
 	async eval(opt) {
-		return cmd(`bash -c 'source ${this.path} && ${opt}'`)
+		return cmd(`zsh -c 'source ${this.path} && ${opt}'`)
 	}
 
 	evalSync(opt) {
-		return cmdSync(`bash -c 'source ${this.path} && ${opt}'`)
+		return cmdSync(`zsh -c 'source ${this.path} && ${opt}'`)
 	}
 
 	mode() {
